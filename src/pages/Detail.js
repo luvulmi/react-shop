@@ -14,16 +14,28 @@ export default function Detail(props) {
     
     let [count, setCount] = useState(0);
     let [isAlert, setIsAlert] = useState(true);
+    let [inputText, setInputText] = useState('');
     
     let {id} = useParams();
     
     const shoes = props.shoes.find(data => data.id == id);
     
     useEffect(() => {
-        setTimeout(() => {setIsAlert(false)},2000);
-    })
+        let al = setTimeout(() => {setIsAlert(false)},2000);
+        return () => {
+            // useEffect 동작 전에 실행.
+            // 예) 타임아웃 제거, 기존 데이터 요청 제거
+            // mount시 실행x. unmount시 실행됨.
+            clearTimeout(al);
+        }
+    },[]) // 실행조건을 넣을 수 있는 곳. 빈 조건은 mount 시 1회만 실행. update 시엔 실행x.
 
-    console.log('isAlert=>',isAlert);
+    useEffect(()=> {
+        if( isNaN(inputText) == true){
+            alert('이러지마세요');
+            return;
+        }
+    }, [inputText])
 
     return(
         <div className="container">
@@ -42,6 +54,7 @@ export default function Detail(props) {
                     <button className="btn btn-danger">주문하기</button> 
                 </div>
             </div>
+            <input onChange={(e)=>{setInputText(e.target.value)}}></input>
         </div> 
     )
 }
